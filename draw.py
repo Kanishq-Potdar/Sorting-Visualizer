@@ -23,7 +23,7 @@ class DrawInfo:
     LARGE_FONT = pygame.font.SysFont('comicsans', 40)
 
     # Padding
-    SIDE_PAD = 100
+    SIDE_PAD = 150
     TOP_PAD = 150
 
     def __init__(self, width, height, values):
@@ -40,7 +40,11 @@ class DrawInfo:
         self.min_val = min(values)
         self.max_val = max(values)
 
-        self.block_width = round((self.width - self.SIDE_PAD) / len(values))
+      
+        right_margin = 200  # space reserved for button panel
+        usable_width = self.width - self.SIDE_PAD - right_margin
+        self.block_width = round(usable_width / len(values))
+
         self.block_height = math.floor((self.height - self.TOP_PAD) / (self.max_val - self.min_val))
         self.start_x = self.SIDE_PAD // 2
 
@@ -57,22 +61,14 @@ def draw(draw_info, algo_name, ascending):
     )
     draw_info.window.blit(title, (draw_info.width / 2 - title.get_width() / 2, 5))
 
-    # Controls (split into two lines)
-    controls = draw_info.FONT.render(
-        "R - Reset | SPACE - Sort | A - Asc | D - Desc",
-        True,
-        draw_info.BLACK
-    )
-    draw_info.window.blit(controls, (draw_info.width / 2 - controls.get_width() / 2, 45))
-
-    sorting = draw_info.FONT.render(
-        "I - Insertion | B - Bubble | M - Merge",
-        True,
-        draw_info.BLACK
-    )
-    draw_info.window.blit(sorting, (draw_info.width / 2 - sorting.get_width() / 2, 75))
-
     draw_list(draw_info)
+
+    if hasattr(draw_info, 'buttons'):
+        mouse_pos = pygame.mouse.get_pos()
+        for btn in draw_info.buttons:
+            btn.check_hover(mouse_pos)
+            btn.draw(draw_info.window)
+
     pygame.display.update()
 
 
@@ -99,3 +95,35 @@ def draw_list(draw_info, color_positions={}, clear_bg=False):
 
     if clear_bg:
         pygame.display.update()
+
+class Button:
+    def __init__(self, x, y, width, hieght, text, font, bg_color, text_color, hover_color, callback=None):
+        self.rect = pygame.Rect(x, y, width, hieght)
+        self.text = text
+        self.font = font
+        self.bg_color = bg_color
+        self.text_color = text_color
+        self.hover_color = hover_color
+        self.iscallback = callback
+        self.is_hovered = False
+
+    def draw(self,surface):
+        color = self.hover_color if self.is_hovered else self.bg_color
+        pygame.draw.rect(surface, color, self.rect)
+        pygame.draw.rect(surface, (0, 0, 0), self.rect, 2) #border
+
+        text_surf=self.font.render(self.text, True, self.text_color)
+        surface.blit(
+            text_surf,
+            (
+                self.rect.x + (self.rect.width - text_surf.get_width())//2,
+                self.rect.y + (self.rect.height - text_surf.get_height())//2
+            )
+        )
+    
+    def check_hover(self, mouse_pos):
+        self.is_hovered = self.rect.collidepoint(mouse_pos)
+    
+    def check_click(self, mouse_pos):
+        if self.rect.collidepoint(mouse_pos) and self.callback:
+            self.callback()

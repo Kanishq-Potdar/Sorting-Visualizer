@@ -1,6 +1,6 @@
 import pygame
 import random
-from draw import DrawInfo, draw
+from draw import DrawInfo, draw, Button
 from algorithms import bubble_sort, insertion_sort, merge_sort
 
 
@@ -17,7 +17,70 @@ def main():
     max_val = 100
     values = generate_random_list(n, min_val, max_val)
 
-    draw_info = DrawInfo(1000, 600, values)
+    draw_info = DrawInfo(1200, 600, values)
+
+    #--- Button Setup ---
+
+    button_width = 140
+    button_height  = 40
+    button_x = draw_info.width - button_width - 80
+    button_y_start = 100
+    button_spacing = 10
+
+    buttons = []
+
+    def set_sort_algorithm(algo, name):
+        def inner():
+            nonlocal sorting_algorithm, algorithm_name
+            sorting_algorithm = algo
+            algorithm_name = name
+        return inner
+    
+    def start_sort():
+        nonlocal sorting, sorting_algorithm_generator
+        if not sorting:
+            sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
+            sorting = True
+
+    def reset_array():
+        nonlocal values, sorting
+        values = generate_random_list(n, max_val, max_val)
+        draw_info.set_list(values)
+        sorting = False
+
+    def set_ascending():
+        nonlocal ascending 
+        ascending = True
+
+    def set_descending():
+        nonlocal ascending 
+        ascending = False
+
+    button_data = [
+        ("Start",start_sort),
+        ("Reset", reset_array),
+        ("Ascend", set_ascending),
+        ("Descend", set_descending),
+        ("Bubble", set_sort_algorithm(bubble_sort, "Bubble Sort")),
+        ("Insertion", set_sort_algorithm(insertion_sort, insertion_sort)),
+        ("Merge", set_sort_algorithm(merge_sort, "Merge sort"))
+    ]
+
+    for i, (label, action) in enumerate(button_data):
+        y = button_y_start + i * (button_height + button_spacing)
+        btn = Button(
+            button_x, y,
+            button_width, button_height,
+            label,
+            draw_info.FONT,
+            draw_info.WHITE, draw_info.BLACK,
+            (200,200,200), #hover color
+            callback = action
+        )
+
+        buttons.append(btn)
+
+    draw_info.buttons = buttons
 
     sorting = False
     ascending = True
@@ -48,6 +111,11 @@ def main():
                 values = generate_random_list(n, min_val, max_val)
                 draw_info.set_list(values)
                 sorting = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                for btn in draw_info.button:
+                    btn.check_click(mouse_pos)
 
             elif event.key == pygame.K_SPACE and not sorting:
                 sorting = True
