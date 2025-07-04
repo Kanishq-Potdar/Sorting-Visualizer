@@ -17,7 +17,7 @@ def main():
     max_val = 100
     values = generate_random_list(n, min_val, max_val)
 
-    draw_info = DrawInfo(800, 600, values)
+    draw_info = DrawInfo(1000, 600, values)
 
     sorting = False
     ascending = True
