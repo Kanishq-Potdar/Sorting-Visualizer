@@ -1,7 +1,7 @@
 import pygame
 import random
 from draw import DrawInfo, draw
-from algorithms import bubble_sort, insertion_sort
+from algorithms import bubble_sort, insertion_sort, merge_sort
 
 
 def generate_random_list(n, min_val, max_val):
@@ -17,7 +17,7 @@ def main():
     max_val = 100
     values = generate_random_list(n, min_val, max_val)
 
-    draw_info = DrawInfo(800, 600, values)
+    draw_info = DrawInfo(1000, 600, values)
 
     sorting = False
     ascending = True
@@ -66,6 +66,10 @@ def main():
             elif event.key == pygame.K_b and not sorting:
                 sorting_algorithm = bubble_sort
                 algorithm_name = "Bubble Sort"
+
+            elif event.key == pygame.K_m and not sorting:
+                sorting_algorithm = merge_sort
+                algorithm_name = "Merge Sort"
 
     pygame.quit()
 
