@@ -104,7 +104,7 @@ class Button:
         self.bg_color = bg_color
         self.text_color = text_color
         self.hover_color = hover_color
-        self.iscallback = callback
+        self.callback = callback
         self.is_hovered = False
 
     def draw(self,surface):

@@ -1,8 +1,7 @@
 import pygame
 import random
 from draw import DrawInfo, draw, Button
-from algorithms import bubble_sort, insertion_sort, merge_sort
-
+from algorithms import bubble_sort, insertion_sort, merge_sort, quick_sort
 
 def generate_random_list(n, min_val, max_val):
     return [random.randint(min_val, max_val) for _ in range(n)]
@@ -42,9 +41,11 @@ def main():
             sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
             sorting = True
 
+
+
     def reset_array():
         nonlocal values, sorting
-        values = generate_random_list(n, max_val, max_val)
+        values = generate_random_list(n, min_val, max_val)
         draw_info.set_list(values)
         sorting = False
 
@@ -57,14 +58,16 @@ def main():
         ascending = False
 
     button_data = [
-        ("Start",start_sort),
+        ("Start", start_sort),
         ("Reset", reset_array),
         ("Ascend", set_ascending),
         ("Descend", set_descending),
         ("Bubble", set_sort_algorithm(bubble_sort, "Bubble Sort")),
-        ("Insertion", set_sort_algorithm(insertion_sort, insertion_sort)),
-        ("Merge", set_sort_algorithm(merge_sort, "Merge sort"))
+        ("Insertion", set_sort_algorithm(insertion_sort, "Insertion Sort")),
+        ("Merge", set_sort_algorithm(merge_sort, "Merge Sort")),
+        ("Quick", set_sort_algorithm(lambda draw_info, asc: quick_sort(draw_info, asc), "Quick Sort"))
     ]
+
 
     for i, (label, action) in enumerate(button_data):
         y = button_y_start + i * (button_height + button_spacing)
@@ -104,40 +107,38 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-            if event.type != pygame.KEYDOWN:
-                continue
-
-            if event.key == pygame.K_r:
-                values = generate_random_list(n, min_val, max_val)
-                draw_info.set_list(values)
-                sorting = False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                for btn in draw_info.button:
+                for btn in draw_info.buttons:
                     btn.check_click(mouse_pos)
 
-            elif event.key == pygame.K_SPACE and not sorting:
-                sorting = True
-                sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    values = generate_random_list(n, min_val, max_val)
+                    draw_info.set_list(values)
+                    sorting = False
 
-            elif event.key == pygame.K_a and not sorting:
-                ascending = True
+                elif event.key == pygame.K_SPACE and not sorting:
+                    sorting = True
+                    sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
 
-            elif event.key == pygame.K_d and not sorting:
-                ascending = False
+                elif event.key == pygame.K_a and not sorting:
+                    ascending = True
 
-            elif event.key == pygame.K_i and not sorting:
-                sorting_algorithm = insertion_sort
-                algorithm_name = "Insertion Sort"
+                elif event.key == pygame.K_d and not sorting:
+                    ascending = False
 
-            elif event.key == pygame.K_b and not sorting:
-                sorting_algorithm = bubble_sort
-                algorithm_name = "Bubble Sort"
+                elif event.key == pygame.K_i and not sorting:
+                    sorting_algorithm = insertion_sort
+                    algorithm_name = "Insertion Sort"
 
-            elif event.key == pygame.K_m and not sorting:
-                sorting_algorithm = merge_sort
-                algorithm_name = "Merge Sort"
+                elif event.key == pygame.K_b and not sorting:
+                    sorting_algorithm = bubble_sort
+                    algorithm_name = "Bubble Sort"
+
+                elif event.key == pygame.K_m and not sorting:
+                    sorting_algorithm = merge_sort
+                    algorithm_name = "Merge Sort"
 
     pygame.quit()
 
