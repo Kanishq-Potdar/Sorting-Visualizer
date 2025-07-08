@@ -74,6 +74,7 @@ def draw(draw_info, algo_name, ascending):
 
     if hasattr(draw_info, 'buttons'):
         mouse_pos = pygame.mouse.get_pos()
+    
         for btn in draw_info.buttons:
             btn.check_hover(mouse_pos)
             btn.draw(draw_info.window)

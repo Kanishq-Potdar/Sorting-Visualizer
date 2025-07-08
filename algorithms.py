@@ -14,6 +14,7 @@ def bubble_sort(draw_info, ascending=True):
 
             if (num1 > num2 and ascending) or (num1 < num2 and not ascending):
                 values[j], values[j + 1] = values[j + 1], values[j]
+                draw_info.swaps += 1
                 SWAP_SOUND.play()
                 pygame.time.delay(10) 
                 draw_list(draw_info, {j: draw_info.GREEN, j + 1: draw_info.RED}, True)
@@ -27,6 +28,8 @@ def insertion_sort(draw_info, ascending=True):
         current = values[i]
 
         while True:
+
+            draw_info.comparisons += 1
             ascending_sort = i > 0 and values[i - 1] > current and ascending
             descending_sort = i > 0 and values[i - 1] < current and not ascending
 
@@ -36,6 +39,8 @@ def insertion_sort(draw_info, ascending=True):
             values[i] = values[i - 1]
             i -= 1
             values[i] = current
+            draw_info.swaps += 1
+
             SWAP_SOUND.play()
             pygame.time.delay(10)
             draw_list(draw_info, {i - 1: draw_info.GREEN, i: draw_info.RED}, True)
@@ -56,6 +61,8 @@ def merge_sort(draw_info, ascending=True):
             right = mid
 
             while left < mid and right < end:
+
+                draw_info.comparisons += 1
                 if (values[left] <= values[right] and ascending) or (values[left] >= values[right] and not ascending):
                     merged.append(values[left])
                     left += 1
@@ -73,6 +80,7 @@ def merge_sort(draw_info, ascending=True):
 
             for i, val in enumerate(merged):
                 values[start + i] = val
+                draw_info.swaps += 1
                 SWAP_SOUND.play()
                 pygame.time.delay(10)
                 draw_list(draw_info, {start + i: draw_info.GREEN}, True)

@@ -42,15 +42,13 @@ def main():
             sorting = True
 
     def step_sort():
-        nonlocal sorting, step_mode, step_once
+        nonlocal step_mode, step_once, sorting, sorting_algorithm_generator
         if not sorting:
+            sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
             sorting = True
             step_mode = True
-            step_once = True
-
-    def resume_sort():
-        nonlocal step_mode
-        step_mode = False
+            draw_info.step_mode = True
+        step_once = True
 
     def reset_array():
         nonlocal values, sorting
@@ -68,7 +66,6 @@ def main():
 
     button_data = [
         ("Step", step_sort),
-        ("Resume", resume_sort),
         ("Start", start_sort),
         ("Reset", reset_array),
         ("Ascend", set_ascending),
@@ -111,11 +108,14 @@ def main():
 
         if sorting:
             try:
-                if not step_mode or step_once:
+                if not step_mode:
+                    next(sorting_algorithm_generator)
+                elif step_once:
                     next(sorting_algorithm_generator)
                     step_once = False
             except StopIteration:
                 sorting = False
+
         else:
             draw(draw_info, algorithm_name, ascending)
 
