@@ -34,13 +34,16 @@ class DrawInfo:
         self.window = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Sorting Algorithm Visualizer")
         self.set_list(values)
+        self.swaps = 0
+        self.comparisons = 0  
 
     def set_list(self, values):
         self.values = values
         self.min_val = min(values)
         self.max_val = max(values)
+        self.swaps = 0
+        self.comparisons = 0
 
-      
         right_margin = 200  # space reserved for button panel
         usable_width = self.width - self.SIDE_PAD - right_margin
         self.block_width = round(usable_width / len(values))
@@ -60,6 +63,12 @@ def draw(draw_info, algo_name, ascending):
         draw_info.GREEN
     )
     draw_info.window.blit(title, (draw_info.width / 2 - title.get_width() / 2, 5))
+
+    swap_text = draw_info.FONT.render(f"Swaps: {draw_info.swaps}", True, draw_info.BLACK)
+    comp_text = draw_info.FONT.render(f"Comparisons: {draw_info.comparisons}", True, draw_info.BLACK)
+
+    draw_info.window.blit(swap_text, (10, 10))
+    draw_info.window.blit(comp_text, (10, 40))
 
     draw_list(draw_info)
 

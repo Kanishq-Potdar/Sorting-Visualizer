@@ -41,7 +41,16 @@ def main():
             sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
             sorting = True
 
+    def step_sort():
+        nonlocal sorting, step_mode, step_once
+        if not sorting:
+            sorting = True
+            step_mode = True
+            step_once = True
 
+    def resume_sort():
+        nonlocal step_mode
+        step_mode = False
 
     def reset_array():
         nonlocal values, sorting
@@ -58,6 +67,8 @@ def main():
         ascending = False
 
     button_data = [
+        ("Step", step_sort),
+        ("Resume", resume_sort),
         ("Start", start_sort),
         ("Reset", reset_array),
         ("Ascend", set_ascending),
@@ -92,12 +103,17 @@ def main():
     algorithm_name = "Bubble Sort"
     sorting_algorithm_generator = None
 
+    step_mode = False
+    step_once = False
+
     while run:
         clock.tick(60)
 
         if sorting:
             try:
-                next(sorting_algorithm_generator)
+                if not step_mode or step_once:
+                    next(sorting_algorithm_generator)
+                    step_once = False
             except StopIteration:
                 sorting = False
         else:
